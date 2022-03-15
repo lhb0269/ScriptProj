@@ -1,0 +1,19 @@
+함수 = 소프트웨어 프로그램 재사용의 기본 방식,일반적인 라이브러리,모듈은 여러 개의 함수들로 구성됨.
+         함수 이름을 지을때 함수의 기능을 명확히 나타내는 것이 좋다.(동사 + 명사 의 형태가 바람직함.)
+
+키워드 인자 = 함수 호출 시, 인자를 선택해서 값을 넘겨주는 방식(함수 호출의 기본 방식)
+
+Local / Global Scope
+	Scope 은 변수를 담아놓는 컨테이너 박스. Scope이 사라지면 변수도 사라짐.
+	함수 안에서 만들어진 변수는 Local Scope에 저장.
+	Global Scope은 프로그램 실행 내내 유지됨.
+
+	Global Scope 의 code에서는 함수 내의 local variable을 엑세스 불가.
+	Local Scope에서 다른 Local scope내의 variable을 엑세스 불가.
+	Local Scope에서는 global scope의 variable을 엑세스 할 수 있음.
+	Global scope와 local scope와 같은 이름의 변수도 사용 가능,but 해당 scope에 있는 것만 이용가능
+	
+	같은 이름의 변수가 Local 및 Global Scope에 존재할 수 있음. 그러나 각자 독립적으로 존재.
+
+람다 함수 = 한줄짜리 함수
+
