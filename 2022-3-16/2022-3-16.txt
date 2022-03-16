@@ -1,0 +1,8 @@
+Dictionary = Key 와 Value짝 들의 집합,파이썬의 내장 자료구조
+    get() = key()가 없을 경우, 기본 value 를 대신 선택
+    setdefault() = key가 없으면 value를 지정,기존 key가 있으면 무시됨
+
+Set = List와 달리 중복을 허용하지 않고 순서가 없음
+    s1 | s2  = 합집합
+    s1 & s2  = 교집합
+    s2 - s1  = 차집합

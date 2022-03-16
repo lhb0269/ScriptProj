@@ -43,6 +43,14 @@ def merge(*str):
             result += s +','
     return result
 
-final = merge('orange','apple','mango','banana','peanut')
+def merge2(*fruits):
+    result =''
+    for fruit in fruits[:-1]:
+        result += fruit + ', '
+    result += 'and ' + fruits[-1] if len(fruits) > 1 else fruits[-1]
+    return result
+
+
+final = merge2('orange','apple','mango','banana','peanut')
 print(final)
 print(type(final))
