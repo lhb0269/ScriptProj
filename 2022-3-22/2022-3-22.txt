@@ -1,0 +1,8 @@
+SHIFT + ALT + E = 라인에 쳐진 줄을 콘솔에서 실행시킴
+CTRL + D = 라인 복사
+
+STRING = 파이썬의 좋은 기능중 하나가 문자처리에 관련된 모듈이 많다.
+
+join = 두개의 문자열을 합칠수 있음
+
+ex) ', '.join(['mango','banana','apple']) => 'mango, banana, apple'
