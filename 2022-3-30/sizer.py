@@ -1,5 +1,4 @@
 import os
-
 os.chdir('c:/Python')
 
 file_dict={}
@@ -9,8 +8,10 @@ for root,subfolders,filename in os.walk('.'):
      (f'{root}')
      (f'{subfolders}')
      (f'{filename}')
+     for fn in filename:
+         #total_size = os.path.getsize(root + os.path.abspath(f'{fn}'))
+         file_dict[root + os.path.abspath(f'{fn}')] = total_size
      #total_size = os.path.getsize(f'{filename}')
-     file_dict[os.path.abspath(f'{filename}')]=total_size
 
 for k,v in file_dict.items():
     print(k,v)
