@@ -1,26 +1,16 @@
 import os
-os.chdir('c:/Python')
+file_info = {}
 
-file_dict={}
-total_size = 0
+#폴더 서치해서 파일을 찾아줘야 할것...
 
-for root,subfolders,filename in os.walk('.'):
-     (f'{root}')
-     (f'{subfolders}')
-     (f'{filename}')
-     for fn in filename:
-         #total_size = os.path.getsize(root + os.path.abspath(f'{fn}'))
-         file_dict[root + os.path.abspath(f'{fn}')] = total_size
-     #total_size = os.path.getsize(f'{filename}')
-
-for k,v in file_dict.items():
-    print(k,v)
-    print('\n')
-# for fn in os.listdir():
-#     total_size = os.path.getsize(fn)
-#     print(fn,total_size)
+for root,subfolders,files in os.walk('c:/Python'):
+    for fn in files:
+        abs_path = root + '/' + fn
+        size = os.path.getsize(abs_path)
+        file_info[abs_path] = size
 
 
-#result = sorted(data.items(),key=lambda x:x[1],reverse= True)
-
-#print(total_size)
+def get_key(x):
+    return x[1]
+file_info_list = [item for item in file_info.items()]
+sorted_file_info_lst = sorted(file_info_list,key = get_key,reverse= True)
