@@ -1,0 +1,19 @@
+  File "C:\Program Files\JetBrains\PyCharm Community Edition 2021.2.2\plugins\python-ce\helpers\pydev\pydevconsole.py", line 483, in <module>
+    pydevconsole.start_client(host, port)
+  File "C:\Program Files\JetBrains\PyCharm Community Edition 2021.2.2\plugins\python-ce\helpers\pydev\pydevconsole.py", line 411, in start_client
+    process_exec_queue(interpreter)
+  File "C:\Program Files\JetBrains\PyCharm Community Edition 2021.2.2\plugins\python-ce\helpers\pydev\pydevconsole.py", line 258, in process_exec_queue
+    interpreter.add_exec(code_fragment)
+  File "C:\Program Files\JetBrains\PyCharm Community Edition 2021.2.2\plugins\python-ce\helpers\pydev\_pydev_bundle\pydev_code_executor.py", line 108, in add_exec
+    more = self.do_add_exec(code_fragment)
+  File "C:\Program Files\JetBrains\PyCharm Community Edition 2021.2.2\plugins\python-ce\helpers\pydev\pydevconsole.py", line 84, in do_add_exec
+    command.run()
+  File "C:\Program Files\JetBrains\PyCharm Community Edition 2021.2.2\plugins\python-ce\helpers\pydev\_pydev_bundle\pydev_console_types.py", line 34, in run
+    self.more = self.interpreter.runsource(text, '<input>', symbol)
+  File "C:\Python\lib\code.py", line 74, in runsource
+    self.runcode(code)
+  File "C:\Python\lib\code.py", line 90, in runcode
+    exec(code, self.locals)
+  File "<input>", line 13, in <module>
+  File "<input>", line 11, in spam
+  File "<input>", line 6, in bacon
