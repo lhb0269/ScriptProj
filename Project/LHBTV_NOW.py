@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from tkinter import *
 from tkinter.ttk import *
 from tkinter.scrolledtext import ScrolledText
+from tkcalendar import Calendar as ca
 import re
 
 options = webdriver.ChromeOptions()
@@ -84,6 +85,8 @@ for team in epl_list:
     text.insert(END,team)
     text.insert(END,'\n')
 text.pack()
+cal= ca(window,selectmode='day',year=2022,month=2,day=22)
+cal.pack()
 
 window.bind("<Escape>",stop)
 window.mainloop()
