@@ -99,30 +99,30 @@ def make_schedules():
         if place is not None and no_match is True:
             place = place.text
         else:
-            place = "no_match"
+            place = None
 
         home_team = tr.select_one('div > span.team_left > span.name')
         if home_team is not None and no_match is True:
             home_team = home_team.text
         else:
-            home_team = 'no_match'
+            home_team = ' '
         away_team = tr.select_one('div > span.team_right > span.name')
         if away_team is not None and no_match is True:
             away_team = away_team.text
         else:
-            away_team = 'no_match'
+            away_team = ' '
 
         home_team_score = tr.select_one('div > span.team_left > span.score')
         if home_team_score is not None and no_match is True:
             home_team_score = home_team_score.text
         else:
-            home_team_score = '경기 시작전'
+            home_team_score = ' '
 
         away_team_score = tr.select_one('div > span.team_right > span.score')
         if away_team_score is not None and no_match is True:
             away_team_score = away_team_score.text
         else:
-            away_team_score = '경시 시작전'
+            away_team_score = ' '
 
         # home_team_emblem = tr.select_one('div > span.team_left > img')
         # if home_team_emblem is None and no_match is True:
@@ -170,14 +170,9 @@ page = driver.page_source
 pre_match = bs(page,"html.parser")
 make_schedules()
 
-for s in schdule:
-    c=''
-    for value in s.values():
-        c+=str(value)+' '
-    print(c)
 window = Tk()
 window.title("LHBTV NOW")
-window.geometry("1000x1000+0+0")
+window.geometry("1280x1000+0+0")
 window.resizable(False,False)
 
 def stop(event = None):
@@ -188,8 +183,18 @@ for team in epl_list:
     text.insert(END,team)
     text.insert(END,'\n')
 text.pack(anchor = NW)
-cal= ca(window,selectmode='day',year=2022,month=2,day=22)
+cal= ca(window,selectmode='day',year=2022,month=4,day=23)
 cal.pack(anchor = NW)
+
+schdule_text = ScrolledText(width = 100,height = 30)
+for s in schdule:
+    if s.get('place') is not None:
+        c = str(s.get('date'))+' '+str(s.get('day_of_the_week'))+' '+str(s.get('match_times'))+' '+s.get('place')+' '+\
+            s.get('home_team')+' vs '+s.get('away_team')+' '+str(s.get('home_team_score'))+ ' : '+str(s.get('away_team_score'))
+        schdule_text.insert(END,c)
+        schdule_text.insert(END,'\n')
+schdule_text.pack(anchor = NE)
+
 
 window.bind("<Escape>",stop)
 window.mainloop()
