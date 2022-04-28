@@ -17,7 +17,6 @@ options.add_argument("disable-gpu")
 
 path = "C:/Users/lhb02/Downloads/chromedriver.exe"
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options = options)
-#driver.implicitly_wait(3)
 
 d=datetime.date.today()
 month =f"{d.month}"
@@ -262,8 +261,15 @@ def select_day(code):
                 schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
             if code == 2:
                 champs_schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
+    print('sex')
 def get_day(event = None):
-    print(cal.get_date())
+    global day
+    date = (cal.get_date())
+    new_day=date.replace('/','.')
+    new_day=new_day.split('.')
+    day=f"{new_day[0]}.{new_day[1]}"
+    schdule_text.bind(select_day(1))
+    champs_schdule_text.bind(select_day(2))
 text = ScrolledText(width = 50,height = 25)
 for team in epl_list:
     text.insert(END,team)
@@ -299,6 +305,5 @@ for s in champs:
 champs_schdule_text.pack(anchor = NE)
 champs_schdule_text.bind(select_day(2))
 
-window.bind("<Escape>",stop)
-window.bind("<Enter>",get_day)
+window.bind("<Escape>",get_day)
 window.mainloop()
