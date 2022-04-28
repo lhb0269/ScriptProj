@@ -8,6 +8,7 @@ from tkinter.ttk import *
 from tkinter.scrolledtext import ScrolledText
 from tkcalendar import Calendar as ca
 import re
+import datetime
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -18,8 +19,10 @@ path = "C:/Users/lhb02/Downloads/chromedriver.exe"
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options = options)
 #driver.implicitly_wait(3)
 
+d=datetime.date.today()
+month =f"{d.month}"
+day = f"{d.month}.{d.day}"
 url = "https://www.skysports.com/premier-league-table"
-match_day_url = "https://sports.news.naver.com/wfootball/schedule/index.nhn?year=2022&month=04&category=epl"
 driver.get(url)
 page = driver.page_source
 pre_team_rank_list = bs(page,"html.parser")
@@ -27,6 +30,7 @@ team_rank_list = pre_team_rank_list.find_all ("a" ,{"class" : "standing-table__c
 team_point_list = pre_team_rank_list.find_all("td",{"class" : "standing-table__cell"})
 
 schdule =[]
+champs=[]
 def make_epl_list(name_list,rank_list,point_list):
     index = 0
     epl_list = []
@@ -162,13 +166,77 @@ def make_schedules():
             #'match_detail_link':match_detail_link
         }
         schdule.append(epl_schedule)
+def make_schedules_champs():
+    trs = pre_match.select('#_monthlyScheduleList > tr')
+    no_match = False
+    for tr in trs:
+        days = tr.select_one('th > div')
+        time = tr.select_one('td.time_place > div > span.time')
+        if time is None:
+            t = '오늘은 경기가 없습니다.'
+            no_match = False
+        else:
+            t = time.text
+            no_match = True
+
+        # 경기날짜
+        if days is not None:
+            a = days.text.strip().split(' ')
+            day = a[0]
+            days_of_weekend = a[1]
+        place = tr.select_one('td.time_place > div > span.place')
+        if place is not None and no_match is True:
+            place = place.text
+        else:
+            place = None
+
+        home_team = tr.select_one('div > span.team_left > span.name')
+        if home_team is not None and no_match is True:
+            home_team = home_team.text
+        else:
+            home_team = ' '
+        away_team = tr.select_one('div > span.team_right > span.name')
+        if away_team is not None and no_match is True:
+            away_team = away_team.text
+        else:
+            away_team = ' '
+
+        home_team_score = tr.select_one('div > span.team_left > span.score')
+        if home_team_score is not None and no_match is True:
+            home_team_score = home_team_score.text
+        else:
+            home_team_score = ' '
+
+        away_team_score = tr.select_one('div > span.team_right > span.score')
+        if away_team_score is not None and no_match is True:
+            away_team_score = away_team_score.text
+        else:
+            away_team_score = ' '
+        champs_schedule = {
+            'date': day,
+            'day_of_the_week': days_of_weekend,
+            'match_times': [t],
+            'place': place,
+            'home_team': home_team,
+            'away_team': away_team,
+            'home_team_score': home_team_score,
+            'away_team_score': away_team_score,
+        }
+        champs.append(champs_schedule)
 
 epl_list = get_epl_data()
 
+match_day_url = f"https://sports.news.naver.com/wfootball/schedule/index.nhn?year=2022&month={month}&category=epl"
 driver.get(match_day_url)
 page = driver.page_source
 pre_match = bs(page,"html.parser")
 make_schedules()
+
+chaps_day_url = "https://sports.news.naver.com/wfootball/schedule/index?category=champs"
+driver.get(chaps_day_url)
+page = driver.page_source
+pre_match = bs(page,"html.parser")
+make_schedules_champs()
 
 window = Tk()
 window.title("LHBTV NOW")
@@ -177,7 +245,25 @@ window.resizable(False,False)
 
 def stop(event = None):
     window.quit()
+def select_day(code):
+    target = re.compile(day)
+    if code == 1:
+        input_text = schdule_text.get("1.0",END)
+        lines = input_text.splitlines()
+        schdule_text.tag_remove('found', "1.0", END)
+    elif code == 2:
+        input_text = champs_schdule_text.get("1.0",END)
+        lines = input_text.splitlines()
+        champs_schdule_text.tag_remove('found', "1.0", END)
 
+    for i,line in enumerate(lines):
+        for mo in target.finditer(line):
+            if code == 1:
+                schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
+            if code == 2:
+                champs_schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
+def get_day(event = None):
+    print(cal.get_date())
 text = ScrolledText(width = 50,height = 25)
 for team in epl_list:
     text.insert(END,team)
@@ -186,7 +272,12 @@ text.pack(anchor = NW)
 cal= ca(window,selectmode='day',year=2022,month=4,day=23)
 cal.pack(anchor = NW)
 
+
+team_listbox = Listbox(selectmode = 'single',height = 15)
+
+
 schdule_text = ScrolledText(width = 100,height = 30)
+schdule_text.tag_configure('found',background = 'blue',foreground = 'purple')
 for s in schdule:
     if s.get('place') is not None:
         c = str(s.get('date'))+' '+str(s.get('day_of_the_week'))+' '+str(s.get('match_times'))+' '+s.get('place')+' '+\
@@ -194,7 +285,20 @@ for s in schdule:
         schdule_text.insert(END,c)
         schdule_text.insert(END,'\n')
 schdule_text.pack(anchor = NE)
+schdule_text.bind(select_day(1))
 
+
+champs_schdule_text = ScrolledText(width = 100,height = 30)
+champs_schdule_text.tag_configure('found',background = 'blue',foreground = 'purple')
+for s in champs:
+    if s.get('place') is not None:
+        c = str(s.get('date'))+' '+str(s.get('day_of_the_week'))+' '+str(s.get('match_times'))+' '+s.get('place')+' '+\
+            s.get('home_team')+' vs '+s.get('away_team')+' '+str(s.get('home_team_score'))+ ' : '+str(s.get('away_team_score'))
+        champs_schdule_text.insert(END,c)
+        champs_schdule_text.insert(END,'\n')
+champs_schdule_text.pack(anchor = NE)
+champs_schdule_text.bind(select_day(2))
 
 window.bind("<Escape>",stop)
+window.bind("<Enter>",get_day)
 window.mainloop()
