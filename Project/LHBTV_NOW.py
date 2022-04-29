@@ -1,10 +1,10 @@
-import requests
+import time
 from bs4 import BeautifulSoup as bs
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from tkinter import *
-from tkinter.ttk import *
+from tkinter import messagebox
 from tkinter.scrolledtext import ScrolledText
 from tkcalendar import Calendar as ca
 import re
@@ -32,6 +32,7 @@ schdule =[]
 champs=[]
 list=[]
 team_list=[]
+favorite_team=''
 def make_epl_list(name_list,rank_list,point_list):
     index = 0
     epl_list = []
@@ -128,35 +129,10 @@ def make_schedules():
             away_team_score = away_team_score.text
         else:
             away_team_score = ' '
-
-        # home_team_emblem = tr.select_one('div > span.team_left > img')
-        # if home_team_emblem is None and no_match is True:
-        #     home_team_emblem = " "
-        # else:
-        #     home_team_emblem = home_team_emblem['src']
-        #     emblem_b = home_team_emblem.split('=')
-        #     emblem_c = emblem_b[1].split('&')
-        #     home_team_emblem = emblem_c[0]
-        #
-        # away_team_emblem = tr.select_one('div > span.team_right > img')
-        # if away_team_emblem is None and no_match is True:
-        #     away_team_emblem = " "
-        # else:
-        #     away_team_emblem = away_team_emblem['src']
-        #     emblem_b = away_team_emblem.split('=')
-        #     emblem_c = emblem_b[1].split('&')
-        #     away_team_emblem = emblem_c[0]
-        #
-        # match_detail_link = tr.select_one('td.broadcast > div >a ')
-        # if match_detail_link is not None and no_match is True:
-        #     match_detail_link = match_detail_link['href']
-        # else:
-        #     match_detail_link = "경기가 없습니다."
-
         epl_schedule ={
             'date' :day,
             'day_of_the_week':days_of_weekend,
-            'match_times':[t],
+            'match_times':t,
             'place':place,
             'home_team':home_team,
             'away_team':away_team,
@@ -218,7 +194,7 @@ def make_schedules_champs():
         champs_schedule = {
             'date': day,
             'day_of_the_week': days_of_weekend,
-            'match_times': [t],
+            'match_times': t,
             'place': place,
             'home_team': home_team,
             'away_team': away_team,
@@ -270,11 +246,12 @@ def select_day(code):#날짜 선택
                 schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
             if code == 2:
                 champs_schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
+#좋아하는 팀 선택
 def select_team(event=None):
-    team=""
+    global favorite_team
     for i in favorite_team_listbox.curselection():
-        team=favorite_team_listbox.get(i)
-    target = re.compile(team)
+        favorite_team=favorite_team_listbox.get(i)
+    target = re.compile(favorite_team)
     input_text = schdule_text.get("1.0",END)
     lines = input_text.splitlines()
 
@@ -282,6 +259,20 @@ def select_team(event=None):
     for i,line in enumerate(lines):
         for mo in target.finditer(line):
             schdule_text.tag_add('found', f"{i + 1}.0+{mo.span()[0]}chars", f"{i + 1}.0+{mo.span()[1]}chars")
+    alam(favorite_team)
+def alam(team):
+    now = time.localtime()
+    match_time=""
+    for s in schdule:
+        if str(s.get('date')) == day:
+            if str(s.get('home_team')) == team or str(s.get('away_team')) == team:
+                match_time = str(s.get('match_times')).replace(":","")
+    if match_time == "":
+        return False
+    now = int(f"{now.tm_hour}{now.tm_min}")
+    match_time = int(match_time)
+    if match_time - now < 30:
+       messagebox.showinfo(title="알림",message="경기 시작 30분 전")
 
 def get_day(event = None):#달력에서 날짜 정보 가져오기
     global day
