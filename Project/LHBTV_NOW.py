@@ -96,9 +96,6 @@ def make_schedules():
             a= days.text.strip().split(' ')
             day = a[0]
             days_of_weekend = a[1]
-        # else:
-        #     day = "no_match_day"
-        #     days_of_weekend = "no_match"
 
         #경기장소
         place = tr.select_one('td.time_place > div > span.place')
@@ -138,9 +135,6 @@ def make_schedules():
             'away_team':away_team,
             'home_team_score':home_team_score,
             'away_team_score':away_team_score,
-            #'home_team_emblem':home_team_emblem,
-            #'away_team_emblem':away_team_emblem,
-            #'match_detail_link':match_detail_link
         }
         list.append(home_team)
         schdule.append(epl_schedule)
@@ -226,6 +220,7 @@ window = Tk()
 window.title("LHBTV NOW")
 window.geometry("1280x1000+0+0")
 window.resizable(False,False)
+window.configure(background = 'black')
 
 def stop(event = None):
     window.quit()
@@ -295,7 +290,7 @@ team_listbox = Listbox(selectmode = 'single',height = 15)
 
 
 schdule_text = ScrolledText(width = 100,height = 30)
-schdule_text.tag_configure('found',background = 'blue',foreground = 'purple')
+schdule_text.tag_configure('found',background = 'black',foreground = 'white')
 for s in schdule:
     if s.get('place') is not None:
         c = str(s.get('date'))+' '+str(s.get('day_of_the_week'))+' '+str(s.get('match_times'))+' '+s.get('place')+' '+\
@@ -307,7 +302,7 @@ schdule_text.bind(select_day(1))
 
 
 champs_schdule_text = ScrolledText(width = 100,height = 30)
-champs_schdule_text.tag_configure('found',background = 'blue',foreground = 'purple')
+champs_schdule_text.tag_configure('found',background = 'black',foreground = 'white')
 for s in champs:
     if s.get('place') is not None:
         c = str(s.get('date'))+' '+str(s.get('day_of_the_week'))+' '+str(s.get('match_times'))+' '+s.get('place')+' '+\
@@ -322,6 +317,11 @@ for v in team_list:
     favorite_team_listbox.insert(END,v)
 favorite_team_listbox.place(x=0,y=500)
 favorite_team_listbox.bind('<<ListboxSelect>>',select_team)
+
+Logo = 'Logo.PNG'
+img = PhotoImage(file = Logo)
+logo_label = Label(window,image = img,borderwidth = 0)
+logo_label.place(x = 650,y = 900)
 
 window.bind("<Escape>",get_day)
 window.mainloop()
