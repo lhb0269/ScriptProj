@@ -30,6 +30,8 @@ team_point_list = pre_team_rank_list.find_all("td",{"class" : "standing-table__c
 
 schdule =[]
 champs=[]
+list=[]
+team_list=[]
 def make_epl_list(name_list,rank_list,point_list):
     index = 0
     epl_list = []
@@ -164,8 +166,10 @@ def make_schedules():
             #'away_team_emblem':away_team_emblem,
             #'match_detail_link':match_detail_link
         }
+        list.append(home_team)
         schdule.append(epl_schedule)
 def make_schedules_champs():
+    global list
     trs = pre_match.select('#_monthlyScheduleList > tr')
     no_match = False
     for tr in trs:
@@ -237,6 +241,11 @@ page = driver.page_source
 pre_match = bs(page,"html.parser")
 make_schedules_champs()
 
+#좋아하는 팀 리스트
+for v in list:
+    if v not in team_list and v != ' ':
+        team_list.append(v)
+
 window = Tk()
 window.title("LHBTV NOW")
 window.geometry("1280x1000+0+0")
@@ -244,7 +253,7 @@ window.resizable(False,False)
 
 def stop(event = None):
     window.quit()
-def select_day(code):
+def select_day(code):#날짜 선택
     target = re.compile(day)
     if code == 1:
         input_text = schdule_text.get("1.0",END)
@@ -261,8 +270,20 @@ def select_day(code):
                 schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
             if code == 2:
                 champs_schdule_text.tag_add('found',f"{i+1}.0+{mo.span()[0]}chars",f"{i+1}.0+{mo.span()[1]}chars")
-    print('sex')
-def get_day(event = None):
+def select_team(event=None):
+    team=""
+    for i in favorite_team_listbox.curselection():
+        team=favorite_team_listbox.get(i)
+    target = re.compile(team)
+    input_text = schdule_text.get("1.0",END)
+    lines = input_text.splitlines()
+
+    schdule_text.tag_remove('found',"1.0",END)
+    for i,line in enumerate(lines):
+        for mo in target.finditer(line):
+            schdule_text.tag_add('found', f"{i + 1}.0+{mo.span()[0]}chars", f"{i + 1}.0+{mo.span()[1]}chars")
+
+def get_day(event = None):#달력에서 날짜 정보 가져오기
     global day
     date = (cal.get_date())
     new_day=date.replace('/','.')
@@ -274,9 +295,9 @@ text = ScrolledText(width = 50,height = 25)
 for team in epl_list:
     text.insert(END,team)
     text.insert(END,'\n')
-text.pack(anchor = NW)
+text.place(x = 0,y = 0)
 cal= ca(window,selectmode='day',year=2022,month=4,day=23)
-cal.pack(anchor = NW)
+cal.place(x=0,y=330)
 
 
 team_listbox = Listbox(selectmode = 'single',height = 15)
@@ -290,7 +311,7 @@ for s in schdule:
             s.get('home_team')+' vs '+s.get('away_team')+' '+str(s.get('home_team_score'))+ ' : '+str(s.get('away_team_score'))
         schdule_text.insert(END,c)
         schdule_text.insert(END,'\n')
-schdule_text.pack(anchor = NE)
+schdule_text.pack(anchor = E)
 schdule_text.bind(select_day(1))
 
 
@@ -302,8 +323,14 @@ for s in champs:
             s.get('home_team')+' vs '+s.get('away_team')+' '+str(s.get('home_team_score'))+ ' : '+str(s.get('away_team_score'))
         champs_schdule_text.insert(END,c)
         champs_schdule_text.insert(END,'\n')
-champs_schdule_text.pack(anchor = NE)
+champs_schdule_text.pack(anchor = E)
 champs_schdule_text.bind(select_day(2))
+
+favorite_team_listbox = Listbox(selectmode = 'single',height = 10)
+for v in team_list:
+    favorite_team_listbox.insert(END,v)
+favorite_team_listbox.place(x=0,y=500)
+favorite_team_listbox.bind('<<ListboxSelect>>',select_team)
 
 window.bind("<Escape>",get_day)
 window.mainloop()
