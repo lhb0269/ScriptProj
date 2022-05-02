@@ -267,7 +267,7 @@ def alam(team):
     now = int(f"{now.tm_hour}{now.tm_min}")
     match_time = int(match_time)
     if match_time - now < 30:
-       messagebox.showinfo(title="알림",message="경기 시작 30분 전")
+       messagebox.showinfo(title="알림",message=f"경기 시작 {match_time - now }분 전")
 
 def get_day(event = None):#달력에서 날짜 정보 가져오기
     global day
