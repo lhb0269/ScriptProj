@@ -3,6 +3,10 @@ import time
 from bs4 import BeautifulSoup
 import re
 
+
+#봇 키
+key = '5587375417:AAG9AB8nf59EUNU3nz9a5JWq1LNnR4OI2_8'
+
 # url입력
 driver = webdriver.Chrome('C:/ScriptProj/2022-5-24/chromedriver.exe') # 크롬드라이버 경로 설정
 url = "https://www.yogiyo.co.kr/" # 사이트 입력
