@@ -2,10 +2,56 @@ from selenium import webdriver
 import time
 from bs4 import BeautifulSoup
 import re
-
+import requests
 
 #봇 키
 key = '5587375417:AAG9AB8nf59EUNU3nz9a5JWq1LNnR4OI2_8'
+r = requests.get(f'https://api.telegram.org/bot{key}/getMe')
+
+r.headers
+r.headers['content-type']
+r.json()
+
+sender_id = None
+def print_msg(msg):
+    global sender_id
+    sender_id = msg['from']['id']
+    sender = msg['from']['first_name']
+    text = msg['text']
+    print(f'{sender}({sender_id}): {text}')
+    if text =='!help':
+        send_msg()
+def send_msg():
+    global r
+    url = f'https://api.telegram.org/bot{key}/sendMessage'
+    params = {
+        'chat_id' : sender_id,
+        'text' : '안녕하세욤'
+    }
+    r = requests.get(url,params=params)
+url = f'https://api.telegram.org/bot{key}/getUpdates'
+r=requests.get(url)
+r.json()
+alist=[]
+if len(r.json()['result']):
+    update_list = r.json()['result']
+    for update in update_list:
+        alist.append(update)
+        print_msg(update['message'])
+    last_update_id = alist[-1]['update_id']
+    params ={
+        'offset': last_update_id + 1
+    }
+    r= requests.get(url,params=params)
+    r.json()
+    if r.ok:
+        update_list = r.json()['result']
+        for update in update_list:
+            print_msg(update['message'])
+
+
+
+
 
 # url입력
 driver = webdriver.Chrome('C:/ScriptProj/2022-5-24/chromedriver.exe') # 크롬드라이버 경로 설정
